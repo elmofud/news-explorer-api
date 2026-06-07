@@ -14,6 +14,8 @@ app.get("/", (req, res) => {
   res.send("News Explorer API is running");
 });
 
+app.use("/", indexRouter);
+
 app.use(routes);
 
 app.listen(PORT, () => {

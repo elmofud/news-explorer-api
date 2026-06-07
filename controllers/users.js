@@ -18,6 +18,13 @@ const createUser = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .orFail()
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send({ message: err.message }));
+};
+
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -35,4 +42,4 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { createUser, login };
+module.exports = { createUser, login, getCurrentUser };
