@@ -6,8 +6,10 @@ const {
   deleteArticle,
 } = require("../controllers/articles");
 
-router.get("/", auth, getArticles);
-router.post("/", auth, createArticle);
-router.delete("/:articleId", auth, deleteArticle);
+router.use(auth);
+
+router.get("/", getArticles);
+router.post("/", createArticle);
+router.delete("/:articleId", deleteArticle);
 
 module.exports = router;
