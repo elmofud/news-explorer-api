@@ -16,6 +16,8 @@ app.get("/", (req, res) => {
 
 app.use("/", indexRouter);
 
+app.use(errors());
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
