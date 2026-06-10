@@ -1,9 +1,9 @@
 const Article = require("../models/articles");
 
-const getArticles = (req, res) => {
+const getArticles = (req, res, next) => {
   Article.find({ owner: req.user._id })
     .then((articles) => res.send({ data: articles }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
 const createArticle = (req, res) => {
