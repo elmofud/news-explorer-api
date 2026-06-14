@@ -1,3 +1,6 @@
+const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
+const ForbiddenError = require("../errors/ForbiddenError");
 const Article = require("../models/articles");
 
 const getArticles = (req, res, next) => {
@@ -6,48 +9,42 @@ const getArticles = (req, res, next) => {
     .catch(next);
 };
 
-const createArticle = (req, res) => {
+const createArticle = (req, res, next) => {
   const { keyword, title, text, date, source, link, image } = req.body;
   const owner = req.user._id;
   Article.create({ keyword, title, text, date, source, link, image, owner })
     .then((article) => res.status(201).send({ data: article }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: "Invalid Data" });
+        next(new BadRequestError("Invalid data"));
       } else {
-        res.status(500).send({ message: err.message });
+        next(err);
       }
     });
 };
 
-const deleteArticle = (req, res) => {
+const deleteArticle = (req, res, next) => {
   const { articleId } = req.params;
   const { _id } = req.user;
 
   Article.findById(articleId)
     .select("+owner")
     .orFail(() => {
-      const error = new Error("Article not found");
-      error.statusCode = 404;
-      throw error;
+      throw new NotFoundError("Article not Found");
     })
     .then((article) => {
       if (article.owner.toString() !== _id.toString()) {
-        const error = new Error("Forbidden");
-        error.statusCode = 403;
-        throw error;
+        throw new ForbiddenError("Forbidden");
       }
       return Article.findByIdAndDelete(articleId);
     })
     .then((article) => res.send({ data: article }))
     .catch((err) => {
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid Id" });
+        next(new BadRequestError("Invalid Id"));
+      } else {
+        next(err);
       }
-      if (err.statusCode) {
-        return res.status(err.statusCode).send({ message: err.message });
-      }
-      return res.status(500).send({ message: err.message });
     });
 };
 
