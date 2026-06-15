@@ -58,7 +58,6 @@ const login = (req, res, next) => {
       return res.send({ token });
     })
     .catch((err) => {
-      console.log("LOGIN ERROR:", err.name, "|", err.message);
       if (err.message === "Incorrect email or password") {
         next(new UnauthorizedError("Incorrect email or password"));
       } else {
