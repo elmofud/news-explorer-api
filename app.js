@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const { errors } = require("celebrate");
 const indexRouter = require("./routes/index");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 
 app.use("/", indexRouter);
 
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
